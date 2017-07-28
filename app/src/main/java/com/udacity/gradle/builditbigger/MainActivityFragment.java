@@ -30,7 +30,11 @@ public class MainActivityFragment extends Fragment {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
-        mAdView.loadAd(adRequest);
+        if (BuildConfig.FLAVOR.equals("paid")) {
+            mAdView.setVisibility(View.GONE);
+        } else {
+            mAdView.loadAd(adRequest);
+        }
         return root;
     }
 }
