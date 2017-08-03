@@ -53,46 +53,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 //        JavaJokeMain javaJoker = new JavaJokeMain();
-        GCEJokeAsyncTask async = new GCEJokeAsyncTask();
+        GCEJokeAsyncTask async = new GCEJokeAsyncTask() {
+            @Override
+            public void callJokeActivity(String result) {
+                Intent androidLibJokeIntent = new Intent(MainActivity.this, MainJokeActivity.class);
+                androidLibJokeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                androidLibJokeIntent.putExtra(MainJokeActivity.JOKE_EXTRA, result);
+                MainActivity.this.startActivity(androidLibJokeIntent);
+            }
+        };
         async.execute(this);
     }
 
 
-    class GCEJokeAsyncTask extends AsyncTask<Context, String, String> {
-        private MyApi myApiService = null;
-        private Context context;
 
-        @Override
-        protected String doInBackground(Context... params) {
-            if (myApiService == null) {  // Only do this once
-                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/") // 10.0.2.2 is localhost's IP address in Android emulator
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-//                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-//                        .setRootUrl("https://10.10.107.178:8080/_ah/api/");
-
-                myApiService = builder.build();
-            }
-            context = params[0];
-            try {
-                return myApiService.getJoke().execute().getData();
-            } catch (IOException e) {
-                return e.getMessage();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Intent androidLibJokeIntent = new Intent(context, MainJokeActivity.class);
-            androidLibJokeIntent.putExtra(MainJokeActivity.JOKE_EXTRA, result);
-            startActivity(androidLibJokeIntent);
-        }
-    }
 
 
 }
