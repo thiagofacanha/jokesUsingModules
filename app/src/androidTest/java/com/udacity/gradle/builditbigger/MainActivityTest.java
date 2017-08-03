@@ -24,7 +24,7 @@ public class MainActivityTest {
             public void callJokeActivity(String result) {
                 assertTrue(!result.isEmpty());
             }
-        }.execute(instrumentationCtx).get();
+        }.execute(instrumentationCtx);
 
     }
 
